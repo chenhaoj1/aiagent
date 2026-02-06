@@ -1,0 +1,72 @@
+# ============================================
+# Render 部署配置 (完整版)
+# ============================================
+# 官方文档: https://render.com/docs/yaml-spec
+
+services:
+  # ============================================
+  # 后端 API 服务
+  # ============================================
+  - type: web
+    name: aiagent-backend
+    env: docker
+    region: oregon
+    plan: free
+    dockerfilePath: ./backend/Dockerfile.render
+    dockerContext: ./backend
+    healthCheckPath: /health
+
+    # 环境变量
+    envVars:
+      # Python 配置
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: PORT
+        value: 8000
+
+      # 数据库配置 (自动从数据库服务获取)
+      - key: DATABASE_URL
+        fromDatabase:
+          name: aiagent-db
+          property: connectionString
+
+      # Redis 配置 (自动从 Redis 服务获取)
+      - key: REDIS_URL
+        fromDatabase:
+          name: aiagent-redis
+          property: REDIS_URL
+
+      # 安全密钥 (自动生成)
+      - key: SECRET_KEY
+        generate: true
+
+      # AI API Keys (需要在 Render 控制台手动设置)
+      - key: QWEN_API_KEY
+        sync: false
+      - key: DASHSCOPE_API_KEY
+        sync: false
+
+      # CORS 配置 (允许 Vercel 前端访问)
+      - key: CORS_ORIGINS
+        value: '["https://*.vercel.app"]'
+
+# ============================================
+# 数据库服务
+# ============================================
+databases:
+  # PostgreSQL (Render 免费层提供)
+  - name: aiagent-db
+    databaseName: aiagent_platform
+    user: aiagent
+    plan: free
+    region: oregon
+    # PostgreSQL 版本
+    version: "15"
+
+  # Redis (免费)
+  - name: aiagent-redis
+    plan: free
+    region: oregon
+    maxmemoryPolicy: allkeys-lru
+    # IP 白名单 (允许后端服务访问)
+    ipAllowList: []

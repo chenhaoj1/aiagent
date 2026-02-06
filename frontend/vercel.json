@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@nuxt/vercel-builder",
+      "config": {
+        "nuxtConfig": "nuxt.config.ts"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/"
+    }
+  ],
+  "env": {
+    "NUXT_PUBLIC_API_URL": "@api-url"
+  }
+}

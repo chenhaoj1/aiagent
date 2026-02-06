@@ -1,0 +1,72 @@
+# ============================================
+# AI智能体平台 - Git 忽略文件配置
+# ============================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# 环境变量文件 (重要！)
+.env
+.env.local
+.env.*.local
+backend/.env
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+
+# 日志文件
+logs/
+*.log
+
+# 上传文件
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node.js
+node_modules/
+frontend/node_modules/
+frontend/.nuxt/
+frontend/dist/
+frontend/.output/
+
+# 临时文件
+nul
+.DS_Store
+Thumbs.db
+
+# AI模型文件 (如果有)
+*.pkl
+*.h5
+*.pt
+*.pth
+*.onnx
+
+# 测试覆盖率
+.coverage
+htmlcov/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
