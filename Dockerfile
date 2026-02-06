@@ -15,6 +15,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 复制后端代码
 COPY backend/ .
 
+# 复制 Docker 启动脚本
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # 创建必要的目录
 RUN mkdir -p uploads logs
 
@@ -22,16 +26,5 @@ RUN mkdir -p uploads logs
 ENV PORT=8000
 EXPOSE 8000
 
-# 创建启动脚本
-RUN echo '#!/bin/sh\n\
-echo "Starting application..."\n\
-echo "PORT=$PORT"\n\
-cd /app/backend\n\
-echo "Working directory: $(pwd)"\n\
-echo "Files in directory:"\n\
-ls -la\n\
-python -m uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}\n\
-' > /start.sh && chmod +x /start.sh
-
 # 启动应用
-CMD ["/start.sh"]
+CMD ["/usr/local/bin/docker-entrypoint.sh"]
