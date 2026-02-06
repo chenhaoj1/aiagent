@@ -25,13 +25,10 @@ from app.api.deps import get_current_active_user, check_user_quota, consume_user
 
 router = APIRouter(prefix="/knowledge-bases", tags=["知识库"])
 
-# 尝试导入向量服务，如果失败则使用简化版
-try:
-    from pymilvus import connections
-    MILVUS_AVAILABLE = True
-except ImportError:
-    MILVUS_AVAILABLE = False
+# Milvus 向量数据库已禁用（Railway 部署不需要）
+MILVUS_AVAILABLE = False
 
+# 尝试导入通义千问服务
 try:
     from app.services.qwen_service import qwen_service
     QWEN_AVAILABLE = True

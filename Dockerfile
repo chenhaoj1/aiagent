@@ -2,6 +2,9 @@ FROM python:3.11-slim
 
 WORKDIR /app/backend
 
+# 缓存破坏器 - 强制重建依赖层
+ARG CACHEBUST=1
+
 # 安装系统依赖
 RUN apt-get update && apt-get install -y \
     curl \
