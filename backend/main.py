@@ -13,19 +13,26 @@ from app.core.database import init_db
 from app.api import auth, knowledge_base, video
 
 
-# 配置日志
+# 配置日志 - 简化版以支持 Railway 部署
 logger.remove()
-logger.add(
-    "logs/app.log",
-    rotation="500 MB",
-    retention="10 days",
-    level="INFO",
-    format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}"
-)
+# 只使用控制台输出，避免文件写入问题
 logger.add(
     sink=lambda msg: print(msg, end=""),
-    level="INFO"
+    level="INFO",
+    format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>"
 )
+# 在非 Railway 环境中添加文件日志
+if os.getenv("RAILWAY_ENVIRONMENT") is None and os.getenv("VERCEL") is None:
+    try:
+        logger.add(
+            "logs/app.log",
+            rotation="500 MB",
+            retention="10 days",
+            level="INFO",
+            format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}"
+        )
+    except Exception:
+        pass  # 忽略文件日志错误
 
 
 @asynccontextmanager
