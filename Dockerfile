@@ -20,7 +20,18 @@ RUN mkdir -p uploads logs
 
 # Railway 自动注入 PORT 环境变量，这里只是默认值
 ENV PORT=8000
-EXPOSE ${PORT}
+EXPOSE 8000
 
-# 启动应用 - 使用 Railway 提供的 PORT
-CMD ["sh", "-c", "python -m uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# 创建启动脚本
+RUN echo '#!/bin/sh\n\
+echo "Starting application..."\n\
+echo "PORT=$PORT"\n\
+cd /app/backend\n\
+echo "Working directory: $(pwd)"\n\
+echo "Files in directory:"\n\
+ls -la\n\
+python -m uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}\n\
+' > /start.sh && chmod +x /start.sh
+
+# 启动应用
+CMD ["/start.sh"]
