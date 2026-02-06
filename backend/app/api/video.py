@@ -21,7 +21,14 @@ from app.schemas.video import (
     MessageResponse,
 )
 from app.api.deps import get_current_active_user, get_current_superuser, check_user_quota, consume_user_quota
-from app.services.wanxiang_service import wanxiang_service
+
+# 尝试导入通义万相服务，如果失败则使用模拟模式
+try:
+    from app.services.wanxiang_service import wanxiang_service
+    WANXIANG_AVAILABLE = True
+except ImportError:
+    WANXIANG_AVAILABLE = False
+    wanxiang_service = None
 
 router = APIRouter(prefix="/video", tags=["AI视频"])
 
@@ -92,6 +99,13 @@ async def process_video_task(task_id: int, db: Session):
     """
     task = db.query(VideoGenerationTask).filter(VideoGenerationTask.id == task_id).first()
     if not task:
+        return
+
+    # 检查服务是否可用
+    if not WANXIANG_AVAILABLE or wanxiang_service is None:
+        task.status = VideoGenerationStatus.FAILED.value
+        task.error_message = "通义万相服务未配置，请设置 DASHSCOPE_API_KEY 环境变量"
+        db.commit()
         return
 
     try:
@@ -405,7 +419,14 @@ async def generate_video_script(
     # 检查配额
     check_user_quota(current_user)
 
-    from app.services.qwen_service import qwen_service
+    # 尝试导入通义千问服务
+    try:
+        from app.services.qwen_service import qwen_service
+    except ImportError:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="通义千问服务未配置，请设置 QWEN_API_KEY 环境变量"
+        )
 
     system_prompt = f"""你是一个专业的视频脚本创作助手。
 请根据用户提供的主题，创作一个约 {duration} 秒的视频脚本。

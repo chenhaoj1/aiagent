@@ -18,9 +18,9 @@ COPY backend/ .
 # 创建必要的目录
 RUN mkdir -p uploads logs
 
-# Railway 自动注入 PORT 环境变量
+# Railway 自动注入 PORT 环境变量，这里只是默认值
 ENV PORT=8000
-EXPOSE 8000
+EXPOSE ${PORT}
 
-# 启动应用
-CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# 启动应用 - 使用 Railway 提供的 PORT
+CMD ["sh", "-c", "python -m uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
