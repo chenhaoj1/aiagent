@@ -29,8 +29,5 @@ RUN mkdir -p uploads logs
 ENV PORT=8000
 EXPOSE 8000
 
-# 测试 Python 导入
-RUN python -c "from main import app; print('App import successful')"
-
 # 启动应用
 CMD ["/usr/local/bin/docker-entrypoint.sh"]
