@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # 复制后端代码
 COPY backend/ .
-RUN echo "Code deployed: 2026-02-07-10:30-v${CACHEBUST}"
+RUN cat .cache-buster && echo "Code deployed: $(cat .cache-buster)"
 
 # 复制 Docker 启动脚本
 COPY docker-entrypoint.sh /usr/local/bin/
