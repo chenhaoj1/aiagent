@@ -91,5 +91,26 @@ class QwenService:
             raise ValueError("AI 服务响应格式错误")
 
 
-# 全局服务实例
-qwen_service = QwenService()
+# 延迟初始化服务实例（避免模块导入时创建）
+_qwen_service_instance = None
+
+
+def get_qwen_service():
+    """获取或创建通义千问服务实例（延迟初始化）"""
+    global _qwen_service_instance
+    if _qwen_service_instance is None:
+        _qwen_service_instance = QwenService()
+    return _qwen_service_instance
+
+
+# 向后兼容：保留全局变量名，但改为函数调用
+class _QwenServiceProxy:
+    """代理类，延迟初始化真实服务"""
+    def __getattr__(self, name):
+        return getattr(get_qwen_service(), name)
+
+    async def __call__(self, *args, **kwargs):
+        return await get_qwen_service().__call__(*args, **kwargs)
+
+
+qwen_service = _QwenServiceProxy()

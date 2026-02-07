@@ -121,14 +121,16 @@ async def health_check():
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):
     """
-    全局异常处理器
+    全局异常处理器 - 确保应用不会因未处理异常而崩溃
     """
-    logger.error(f"未处理的异常: {exc}")
+    logger.error(f"未处理的异常: {type(exc).__name__}: {exc}")
+
+    # 返回友好的错误响应，而不是让应用崩溃
     return JSONResponse(
         status_code=500,
         content={
             "message": "服务器内部错误",
-            "detail": str(exc) if settings.DEBUG else "请联系管理员"
+            "detail": str(exc) if settings.DEBUG else "服务暂时不可用，请稍后重试"
         }
     )
 
