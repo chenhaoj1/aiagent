@@ -87,8 +87,10 @@ class Settings(BaseSettings):
         "http://localhost:5173",
         "http://127.0.0.1:3000",
         "http://127.0.0.1:5173",
-        # Vercel 前端域名 (部署后需要更新)
+        # Vercel 前端域名
+        "https://aiagent-vert.vercel.app",
         "https://*.vercel.app",
+        "*"  # 允许所有来源（开发用，生产环境建议移除）
     ]
 
     # 分页配置
