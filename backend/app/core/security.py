@@ -4,12 +4,9 @@
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 from jose import JWTError, jwt
-from passlib.context import CryptContext
+import bcrypt
 
 from app.core.config import settings
-
-# 密码加密上下文
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -23,10 +20,11 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     Returns:
         bool: 密码是否匹配
     """
-    # bcrypt 有 72 字节限制，截断超长密码
-    if len(plain_password.encode('utf-8')) > 72:
-        plain_password = plain_password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
-    return pwd_context.verify(plain_password, hashed_password)
+    # bcrypt 有 72 字节限制，自动截断
+    password_bytes = plain_password.encode('utf-8')
+    if len(password_bytes) > 72:
+        password_bytes = password_bytes[:72]
+    return bcrypt.checkpw(password_bytes, hashed_password.encode('utf-8'))
 
 
 def get_password_hash(password: str) -> str:
@@ -39,10 +37,12 @@ def get_password_hash(password: str) -> str:
     Returns:
         str: 哈希密码
     """
-    # bcrypt 有 72 字节限制，截断超长密码
-    if len(password.encode('utf-8')) > 72:
-        password = password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
-    return pwd_context.hash(password)
+    # bcrypt 有 72 字节限制，自动截断
+    password_bytes = password.encode('utf-8')
+    if len(password_bytes) > 72:
+        password_bytes = password_bytes[:72]
+    hashed = bcrypt.hashpw(password_bytes, bcrypt.gensalt(12))
+    return hashed.decode('utf-8')
 
 
 def create_access_token(
