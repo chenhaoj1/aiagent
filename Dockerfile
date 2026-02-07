@@ -3,7 +3,7 @@ FROM python:3.11-slim
 WORKDIR /app/backend
 
 # 缓存破坏器 - 强制重建依赖层
-ARG CACHEBUST=4
+ARG CACHEBUST=5
 
 # 安装系统依赖（添加 CACHEBUST 引用以破坏缓存）
 RUN apt-get update && apt-get install -y \
