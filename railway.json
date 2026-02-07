@@ -8,5 +8,10 @@
     "healthcheckTimeout": 60,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
+  },
+  "envs": {
+    "QWEN_API_KEY": {
+      "value": "sk-a4089bcc6af1484fad00efbb6d3fc188"
+    }
   }
 }
