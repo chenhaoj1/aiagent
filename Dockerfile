@@ -2,8 +2,8 @@ FROM python:3.11-slim
 
 WORKDIR /app/backend
 
-# 缓存破坏器 - 强制重建 (2026-02-07-10:30)
-ARG CACHEBUST=6
+# 缓存破坏器 - 强制重建 (2026-02-07-11:05)
+ARG CACHEBUST=7
 
 # 安装系统依赖
 RUN apt-get update && apt-get install -y \
@@ -14,7 +14,8 @@ RUN apt-get update && apt-get install -y \
 
 # 复制并安装 Python 依赖
 COPY backend/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir --upgrade 'marshmallow>=3.13.0'
 
 # 复制后端代码
 COPY backend/ .

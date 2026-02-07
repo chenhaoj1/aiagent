@@ -5,7 +5,9 @@ pydantic==2.5.3
 pydantic-settings==2.1.0
 
 # Fix marshmallow version conflict (environs needs >= 3.13)
+# Cache buster: 2026-02-07-11:05-rebuild
 marshmallow>=3.13.0
+# Force pip reinstall by modifying this file
 
 # Database (SQLite only for Railway deployment)
 sqlalchemy==2.0.25
